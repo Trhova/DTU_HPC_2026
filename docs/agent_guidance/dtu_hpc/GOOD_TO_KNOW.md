@@ -103,13 +103,34 @@ bstat -M JOBID
 be repaired by modifying it in place; safely replace the affected pending
 dependency suffix with new, versioned jobs.
 
-### Account-specific, time-bound example
+### Default per-user limit on the `hpc` queue
 
-HPC Support temporarily set the `trhova` account limits to 120 slots and
-1,478,656 MiB of aggregate reserved memory, with a review date of
-**2026-10-01**. This is historical/account-specific information, not a general
-DTU rule and not a permanent entitlement. Always check `blimits` before
-planning concurrency.
+The live `hpc_default_slot_limit` rule was checked on **2026-08-13**. For each
+standard user on the `hpc` queue, it allowed:
+
+- **240 LSF slots** in aggregate (normally corresponding to 240 requested CPU
+  cores); and
+- **1,364,992 MiB of reserved memory** in aggregate, approximately 1,333 GiB or
+  1.30 TiB.
+
+These are per-user totals across all simultaneously running jobs in that queue,
+not per-job allowances. For example, three eight-slot jobs consume 24 of the
+240 slots, while their complete memory reservations are added together against
+the 1,364,992-MiB memory limit.
+
+The configured defaults can change. Check the current rule before planning a
+large or concurrent campaign:
+
+```bash
+blimits -n hpc_default_slot_limit -w
+```
+
+If HPC Support has assigned a user-specific exception, the following shows the
+rule that currently applies to that user:
+
+```bash
+blimits -u USER -q hpc -w
+```
 
 ## Memory accounting can be misleading
 
